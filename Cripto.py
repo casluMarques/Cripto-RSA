@@ -1,4 +1,8 @@
 import random
+import time
+import sys
+
+sys.setrecursionlimit(10000)
 
 fator = random.SystemRandom()
 
@@ -38,26 +42,19 @@ símbolos_para_códigos = {'0': 111, '1': 112, '2': 113, '3': 114, '4': 115,
 ':': 227, '_': 228, '(': 229, ')': 231, '"': 232, '#': 233, '$': 234,
 '%': 235, '@': 236, ' ': 237, '\n': 238}
 
-def euclidianoExtendido (a,b):
+def euclidianoExtendido (phi_de_n,e):
     #principal
-    resto = a%b
-    quociente = a//b
+    resto = phi_de_n%e
+    quociente = phi_de_n//e
     if resto == 0:
-        return (b,0,1)
+        return (e,0,1)
     else:
-        mdc,x,y = euclidianoExtendido(b,resto)
+        mdc,x,y = euclidianoExtendido(e,resto)
         return (mdc,y,x-quociente*y)
 
 def mdc_simples(val1, val2):
-    if val2 > val1:
-        t = val1
-        val1 = val2
-        val2 = t
-    v = 1
-    while v != 0:
-        v = val1 % val2
-        val1 = val2
-        val2 = v
+    while val2 != 0:
+        val1, val2 = val2, val1 % val2
     return val1
 #Gerando p e q:
 def teste_unitario(n, a):
@@ -114,27 +111,23 @@ def gerador_de_chaves(phi_de_n):
 #Gerando de fato as chaves
 e, d = gerador_de_chaves(phi_de_n)
 
-print(e, d, phi_de_n)
-print(pow((símbolos_para_códigos.get('t')), e , phi_de_n))
+#print(e, d, phi_de_n)
+#print(pow((símbolos_para_códigos.get('t')), e , phi_de_n))
 
 def encriptar (string, e ,n):
     tam = len(string.title())
-    print(string)
+    #print(string)
     lista = []
     for c in range (0,tam):
         lista.append(pow((símbolos_para_códigos.get(string[c])), e , n))
     return lista
-
+inicio = time.time()
 lista_encriptada = encriptar("teste", e, n)
-print(lista_encriptada)
+fim = time.time()
+print("Tempo para geração de chave de expoente de tamanho {} é {}".format(n1, fim-inicio))
 
 def descriptar (lista_encriptada, d, n):
     mensagem = []
     for c in range (0, len(lista_encriptada)):
         mensagem.append(códigos_para_símbolos.get(pow(lista_encriptada[c], d , n)))
     return mensagem
-mensagem = descriptar(lista_encriptada, d, n)
-print(mensagem)
-for i in range (len(mensagem)):
-    print(""+ mensagem[i])
-    i=+1
